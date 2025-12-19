@@ -89,7 +89,7 @@ export default function ManageData() {
                         </div>
                     </div>
                     <div className="mt-4 text-center space-y-1">
-                        <p className="text-text-main dark:text-white text-xl font-semibold tracking-tight">João Silva</p>
+                        <p className="text-text-main dark:text-white text-xl font-semibold tracking-tight">{formData.fullName || 'Seu Nome'}</p>
                         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-accent/30 dark:bg-primary/10 border border-accent dark:border-primary/20">
                             <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
                             <p className="text-primary-dark dark:text-primary text-xs font-medium">Conta Verificada</p>
