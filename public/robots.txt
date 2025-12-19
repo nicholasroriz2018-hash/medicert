@@ -1,0 +1,24 @@
+# robots.txt para MediCert
+
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /gerenciar-dados
+Disallow: /pagamento
+
+# Sitemap
+Sitemap: https://medicert.vercel.app/sitemap.xml
+
+# Crawl-delay para bots específicos
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+# Bloquear bots maliciosos
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
