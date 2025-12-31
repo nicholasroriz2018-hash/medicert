@@ -7,6 +7,29 @@ import Link from 'next/link';
 function PaymentContent() {
     const searchParams = useSearchParams();
     const id = searchParams.get('id');
+    const price = parseFloat(searchParams.get('price') || '29.90');
+    const days = parseInt(searchParams.get('days') || '1');
+
+    // Dados de pagamento por faixa de preço
+    const paymentData: Record<number, { qrCode: string; pixCode: string; daysRange: string }> = {
+        29.90: {
+            qrCode: '/pix-qrcode.jpg', // QR code existente
+            pixCode: '00020126580014br.gov.bcb.pix0136b354ecac-bbc2-47b5-bc5e-3b01855799cd520400005303986540529.905802BR5925NICHOLAS ALEXANDER MEDEIR6009Sao Paulo62290525REC693B7AA02381D135004735630475B5',
+            daysRange: '1-2 dias'
+        },
+        49.90: {
+            qrCode: '/pix-qrcode-49.jpg',
+            pixCode: '00020126580014br.gov.bcb.pix0136b354ecac-bbc2-47b5-bc5e-3b01855799cd520400005303986540549.905802BR5925NICHOLAS ALEXANDER MEDEIR6009Sao Paulo62290525REC69552218512537770284276304FB60',
+            daysRange: '3-5 dias'
+        },
+        69.90: {
+            qrCode: '/pix-qrcode-69.jpg',
+            pixCode: '00020126580014br.gov.bcb.pix0136b354ecac-bbc2-47b5-bc5e-3b01855799cd520400005303986540569.905802BR5925NICHOLAS ALEXANDER MEDEIR6009Sao Paulo62290525REC695521BFC5F9258545174363046477',
+            daysRange: '6-7 dias'
+        }
+    };
+
+    const currentPayment = paymentData[price] || paymentData[29.90];
 
     const confirmPayment = async () => {
         if (!id) {
@@ -50,11 +73,11 @@ function PaymentContent() {
                             <div className="flex flex-col justify-between h-20 flex-1">
                                 <div>
                                     <h3 className="text-base font-bold text-gray-900 dark:text-white leading-tight">Atestado Médico Digital</h3>
-                                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Consulta Online + Documento PDF</p>
+                                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{currentPayment.daysRange} • Documento PDF</p>
                                 </div>
                                 <div className="flex items-center justify-between">
                                     <span className="text-xs font-medium px-2 py-0.5 rounded bg-payment-primary/20 text-green-800 dark:text-green-300">Entrega Imediata</span>
-                                    <p className="text-lg font-bold text-gray-900 dark:text-white">R$ 29,90</p>
+                                    <p className="text-lg font-bold text-gray-900 dark:text-white">R$ {price.toFixed(2).replace('.', ',')}</p>
                                 </div>
                             </div>
                         </div>
@@ -69,8 +92,8 @@ function PaymentContent() {
                     </div>
                     <div className="flex flex-col items-center justify-center">
                         <div className="relative flex items-center justify-center p-6 bg-white dark:bg-white/5 rounded-2xl border-2 border-gray-100 dark:border-gray-700 shadow-sm">
-                            {/* Using Material Symbol for QR Code as in original HTML */}
-                            <img src="/pix-qrcode.jpg" alt="QR Code PIX" className="w-[180px] h-[180px] object-contain" />
+                            {/* QR Code dinâmico baseado no preço */}
+                            <img src={currentPayment.qrCode} alt="QR Code PIX" className="w-[180px] h-[180px] object-contain" />
                             <div className="absolute top-0 left-0 w-6 h-6 border-t-4 border-l-4 border-payment-primary rounded-tl-lg -mt-1 -ml-1"></div>
                             <div className="absolute top-0 right-0 w-6 h-6 border-t-4 border-r-4 border-payment-primary rounded-tr-lg -mt-1 -mr-1"></div>
                             <div className="absolute bottom-0 left-0 w-6 h-6 border-b-4 border-l-4 border-payment-primary rounded-bl-lg -mb-1 -ml-1"></div>
@@ -84,7 +107,7 @@ function PaymentContent() {
                     <div className="space-y-2">
                         <label className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 ml-1">Pix Copia e Cola</label>
                         <div className="relative flex items-center group">
-                            <input onClick={(e) => { (e.target as HTMLInputElement).select(); navigator.clipboard.writeText((e.target as HTMLInputElement).value); }} className="w-full rounded-xl border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-white/5 py-3.5 pl-4 pr-14 text-sm text-gray-600 dark:text-gray-300 font-mono focus:border-payment-primary focus:ring-payment-primary truncate cursor-pointer transition-colors group-hover:bg-white dark:group-hover:bg-white/10" readOnly type="text" value="00020126580014br.gov.bcb.pix0136b354ecac-bbc2-47b5-bc5e-3b01855799cd520400005303986540529.905802BR5925NICHOLAS ALEXANDER MEDEIR6009Sao Paulo62290525REC693B7AA02381D135004735630475B5" />
+                            <input onClick={(e) => { (e.target as HTMLInputElement).select(); navigator.clipboard.writeText((e.target as HTMLInputElement).value); }} className="w-full rounded-xl border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-white/5 py-3.5 pl-4 pr-14 text-sm text-gray-600 dark:text-gray-300 font-mono focus:border-payment-primary focus:ring-payment-primary truncate cursor-pointer transition-colors group-hover:bg-white dark:group-hover:bg-white/10" readOnly type="text" value={currentPayment.pixCode} />
                             <button onClick={(e) => { const input = e.currentTarget.previousElementSibling as HTMLInputElement; navigator.clipboard.writeText(input.value); alert('Código PIX copiado!'); }} className="absolute right-2 p-2 text-payment-primary hover:bg-payment-primary/10 rounded-lg transition-colors" title="Copiar código">
                                 <span className="material-symbols-outlined">content_copy</span>
                             </button>

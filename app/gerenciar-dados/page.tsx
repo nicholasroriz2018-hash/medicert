@@ -27,6 +27,15 @@ export default function ManageData() {
         setFormData({ ...formData, [e.target.id]: e.target.value });
     };
 
+    // Função para calcular preço baseado nos dias
+    const getPriceByDays = (days: string): number => {
+        const daysNum = parseInt(days);
+        if (daysNum >= 1 && daysNum <= 2) return 29.90;
+        if (daysNum >= 3 && daysNum <= 5) return 49.90;
+        if (daysNum >= 6 && daysNum <= 7) return 69.90;
+        return 29.90; // fallback
+    };
+
     const saveData = async (e?: React.FormEvent) => {
         if (e) e.preventDefault();
 
@@ -58,7 +67,8 @@ export default function ManageData() {
 
             if (result && result.length > 0) {
                 const id = result[0].id;
-                router.push(`/pagamento?id=${id}`);
+                const price = getPriceByDays(formData.days);
+                router.push(`/pagamento?id=${id}&price=${price}&days=${formData.days}`);
             }
         } catch (error) {
             console.error('Error saving data:', error);
@@ -209,8 +219,13 @@ export default function ManageData() {
                             <label className="flex flex-col group">
                                 <p className="text-text-muted text-xs font-medium uppercase tracking-wider pb-2 group-focus-within:text-primary transition-colors">Dias de Atestado</p>
                                 <select required id="days" value={formData.days} onChange={handleChange} className="form-select flex w-full rounded-lg text-text-main dark:text-white focus:ring-1 focus:ring-primary border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark focus:border-primary h-12 px-4 text-sm font-normal shadow-sm transition-all appearance-none">
-                                    <option value="1">1 dia</option>
-                                    <option value="2">2 dias</option>
+                                    <option value="1">1 dia - R$ 29,90</option>
+                                    <option value="2">2 dias - R$ 29,90</option>
+                                    <option value="3">3 dias - R$ 49,90</option>
+                                    <option value="4">4 dias - R$ 49,90</option>
+                                    <option value="5">5 dias - R$ 49,90</option>
+                                    <option value="6">6 dias - R$ 69,90</option>
+                                    <option value="7">7 dias - R$ 69,90</option>
                                 </select>
                             </label>
                             <label className="flex flex-col flex-1 group">
